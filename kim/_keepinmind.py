@@ -154,5 +154,3 @@ def variables_dict() -> Dict:
     with shelve.open(vault_file) as vault:
         return_ = vault[root_path]
     return return_
-
-
