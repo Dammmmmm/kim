@@ -2,7 +2,7 @@
 
 kim is a public pip librairy. It's purpose is to keep in mind your variable so you can call update and delte them anytime anywhere. It's especially useful for very large project where it can be tough to call your variable in a recursive algorithme.
 
-# Install
+## Install
 
 kim is compatible with python>=3.5 and doesn't require any other package from pip.
 ```bash
@@ -10,8 +10,8 @@ pip install kim
 ```
 
 
-# How to use
-## Create
+## How to use
+### Create
 To create a variable which you would like kim to remember use CreateOrUpdate :
 ```python
 import kim
@@ -26,7 +26,7 @@ Hello World
 <class 'str'>
 ```
 Note that if your using an IDE with IntelliSense, you'll have the option to autofill kim.my_category.my_variable, but it requires one compilation.
-## Update
+### Update
 You can update your variables also by calling CreateOrUpdate:
 ```python
 import kim
@@ -45,7 +45,7 @@ Hello World
 ['Hello world', {'foo': 'bar'}]
 <class 'list'>
 ```
-# Delete
+### Delete
 To delete a variable from a category use Remove and specify which variable to delete :
 ```python
 import kim
@@ -78,7 +78,7 @@ except Exception as e:
 ```bash
 module 'kim' has no attribute 'my_category'
 ```
-## Read
+### Read
 In addtion of fetching your variables with kim.my_category.my_variable you can use the function variables_dict to get a dictionary of the saved variables :
 
 ```python
