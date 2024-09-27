@@ -5,18 +5,6 @@ import importlib.util
 import kim
 import sys
 
-def reload_module(module_name):
-    """
-    Recharge le module pour mettre à jour le cache après une modification.
-    """
-    if module_name in sys.modules:
-        # Supprime le module du cache
-        del sys.modules[module_name]
-
-    # Recharge le module
-    importlib.import_module(module_name)
-    return sys.modules[module_name]
-
 class KeepInMind:
     def __init__(self) -> None:
         self.__rootpath__ = "kim/root"
@@ -25,6 +13,7 @@ class KeepInMind:
         self.__vault__ = self.__shelvefolder__ + "/memory"
         self.__importfile__ = self.__rootpath__ + "/__init__.py"
         self.__ext__ = ".py"
+
     def _refresh_root(self):
         os.makedirs(self.__rootpath__, exist_ok=True)
         with shelve.open(self.__vault__) as coffre:
@@ -54,6 +43,7 @@ class KeepInMind:
     def _del_from_cache(self, category=None):
         module = f"kim.{category}" if category is not None else "kim"
         module = importlib.import_module(module)
+        print(module)
         for attr in dir(module):
             if not attr.startswith("__"):
                 delattr(module, attr)
@@ -79,25 +69,40 @@ class CreateOrUpdate(KeepInMind):
 
 
 class Remove(KeepInMind):
-    def __init__(self, category=None, all=False) -> None:
+    def __init__(self, category, name=None) -> None:
         super().__init__()
-        if all:
-            with shelve.open(self.__vault__) as coffre:
-                coffre[self.__rootpath__] = {}
-            for file_path in os.listdir(self.__rootpath__):
-                if not file_path.endswith('__init__.py') and file_path[-3:] == self.__ext__:
-                    os.remove(self.__rootpath__ + "/" + file_path)
-        else:
+        if name is None:
             with shelve.open(self.__vault__) as coffre:
                 vault = coffre[self.__rootpath__]
                 del vault[category]
                 coffre[self.__rootpath__] = vault
-                os.remove(self.__rootpath__ + "/" + category+self.__ext__)
+            os.remove(self.__rootpath__ + "/" + category+self.__ext__)
+            self._refresh_root()
+            self._refresh_init()
+            self._del_from_cache(category=category)
+        else:
+            with shelve.open(self.__vault__) as coffre:
+                vault = coffre[self.__rootpath__]
+                del vault[category][name]
+                coffre[self.__rootpath__] = vault
+            self._refresh_root()
+            self._refresh_init()
+            importlib.reload(kim)
+            importlib.reload(importlib.import_module(self.__rootmodule__ +"."+ category))
 
+
+class Clear(KeepInMind):
+    def __init__(self) -> None:
+        super().__init__()
+        with shelve.open(self.__vault__) as coffre:
+            coffre[self.__rootpath__] = {}
+        for file_path in os.listdir(self.__rootpath__):
+            if not file_path.endswith('__init__.py') and file_path[-3:] == self.__ext__:
+                os.remove(self.__rootpath__ + "/" + file_path)
+        
         self._refresh_root()
         self._refresh_init()
-        self._del_from_cache(category=category)
-
+        self._del_from_cache()
 
 
             
