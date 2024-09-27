@@ -1,7 +1,7 @@
 import re
 import keyword
 
-def is_valid_filename(filename):
+def _is_valid_filename(filename):
     if len(filename) > 255:
         return False
     invalid_chars = r'[<>:"/\\|?*]'
@@ -12,7 +12,7 @@ def is_valid_filename(filename):
     return True
 
 
-def is_valid_variable_name(variable_name):
+def _is_valid_variable_name(variable_name):
     if variable_name in keyword.kwlist:
         return False
     if not variable_name[0].isalpha() and variable_name[0] != '_':

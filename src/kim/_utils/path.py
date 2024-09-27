@@ -1,9 +1,9 @@
-class Root():
+class _Root():
     def __init__(self) -> None:
-        self.path = "kim/root"
+        self.path = "kim/_root"
         self.module = self.path.replace("/", ".")
 
-class Vault():
+class _Vault():
     def __init__(self) -> None:
-        self.folder = "kim/.memory"
+        self.folder = "kim/_memory"
         self.file = self.folder + "/memory"
