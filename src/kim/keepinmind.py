@@ -1,11 +1,11 @@
 from .util.path import Vault, Root
 from .util.verify import is_valid_filename, is_valid_variable_name
 from .util.exception import ForbiddenFilename, ForbiddenVariableName
+import kim
 import shelve
 import os
 import importlib
 import importlib.util
-import kim
 import sys
 
 class KeepInMind:
