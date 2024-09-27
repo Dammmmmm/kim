@@ -1,3 +1,4 @@
+from util.path import Vault, Root
 import shelve
 import os
 import importlib
@@ -13,6 +14,7 @@ class KeepInMind:
         self.__vault__ = self.__shelvefolder__ + "/memory"
         self.__importfile__ = self.__rootpath__ + "/__init__.py"
         self.__ext__ = ".py"
+        self._refresh_init()
 
     def _refresh_root(self):
         os.makedirs(self.__rootpath__, exist_ok=True)
@@ -40,13 +42,18 @@ class KeepInMind:
         setattr(kim, category, module)
         setattr(module, name, value)
 
-    def _del_from_cache(self, category=None):
-        module = f"kim.{category}" if category is not None else "kim"
+    def _clear_cache(self):
+        module = "kim"
         module = importlib.import_module(module)
-        print(module)
         for attr in dir(module):
             if not attr.startswith("__"):
                 delattr(module, attr)
+        if module in sys.modules:
+            del sys.modules[module]
+
+    def _del_from_cache(self, category):
+        module = importlib.import_module("kim")
+        delattr(module, category)
         if module in sys.modules:
             del sys.modules[module]
 
@@ -79,7 +86,7 @@ class Remove(KeepInMind):
             os.remove(self.__rootpath__ + "/" + category+self.__ext__)
             self._refresh_root()
             self._refresh_init()
-            self._del_from_cache(category=category)
+            self._clear_cache()
         else:
             with shelve.open(self.__vault__) as coffre:
                 vault = coffre[self.__rootpath__]
@@ -102,7 +109,7 @@ class Clear(KeepInMind):
         
         self._refresh_root()
         self._refresh_init()
-        self._del_from_cache()
+        self._clear_cache()
 
 
             
