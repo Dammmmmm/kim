@@ -1,3 +1,5 @@
 import kim
 
-kim.CreateOrUpdate("!rgrgz/.", "/l,efo", 1)
+kim.CreateOrUpdate(category="my_category", name="my_variable", value="Hello World")
+
+print(kim.variables_dict())

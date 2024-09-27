@@ -19,7 +19,7 @@ class _KeepInMind:
         self.__vault__ = _Vault()
         self.__importfile__ = self.__root__.path + "/__init__.py"
         self.__ext__ = ".py"
-        self._refresh_init()
+
 
     def _refresh_root(self):
         os.makedirs(self.__root__.path, exist_ok=True)
@@ -116,9 +116,10 @@ class Remove(_KeepInMind):
             self._del_from_cache(category)
         else:
             with shelve.open(self.__vault__.file) as vault:
-                vault = vault[self.__root__.path]
-                del vault[category][name]
-                vault[self.__root__.path] = vault
+                dict = vault[self.__root__.path]
+                del dict[category][name]
+                vault[self.__root__.path] = dict
+
             self._refresh_root()
             self._refresh_init()
             importlib.reload(kim)
@@ -142,7 +143,7 @@ class Clear(_KeepInMind):
         self._clear_cache()
 
 
-def variables_dict() -> Dict[Dict]:
+def variables_dict() -> Dict:
     """Retreive all the variables created with CreateOrUpdate
 
     Returns:
@@ -153,3 +154,5 @@ def variables_dict() -> Dict[Dict]:
     with shelve.open(vault_file) as vault:
         return_ = vault[root_path]
     return return_
+
+
