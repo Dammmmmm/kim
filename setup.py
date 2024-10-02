@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="kim",
-    version="0.0.1",
+    version="0.0.3",
     author="milan.dg@free.fr",
     url="https://github.com/Dammmmmm/kim",
     description="A package to Keep In Mind your constants and call them anytime anywhere",

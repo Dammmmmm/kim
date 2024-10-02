@@ -46,22 +46,40 @@ Hello World
 <class 'list'>
 ```
 ### Delete
-To delete a variable from a category use Remove and specify which variable to delete :
+To erase every created variables call Clear :
 ```python
 import kim
 
-kim.CreateOrUpdate(category="my_category", name="my_variable", value="Hello World")
-
-kim.Remove(category="my_category", name="my_variable")
+kim.CreateOrUpdate(category="my_category", name="foo", value=100)
+kim.CreateOrUpdate(category="my_category", name="bar", value={"hello world": 1})
 
 try:
-    print(kim.my_category.my_variable)
+    print(kim.my_category.foo)
+except Exception as e:
+    print(e)
+try:
+    print(kim.my_category.bar)
+except Exception as e:
+    print(e)
+
+kim.Clear()
+
+try:
+    print(kim.my_category.foo)
+except Exception as e:
+    print(e)
+try:
+    print(kim.my_category.bar)
 except Exception as e:
     print(e)
 ```
 ```bash
-module 'kim._root.my_category' has no attribute 'my_variable'
+100
+{'hello world': 1}
+module 'kim' has no attribute 'my_category'
+module 'kim' has no attribute 'my_category'
 ```
+
 To delete a category use Remove without specify which variable to delete :
 ```python
 import kim
@@ -78,6 +96,9 @@ except Exception as e:
 ```bash
 module 'kim' has no attribute 'my_category'
 ```
+To delete all the variable use Clear
+
+
 ### Read
 In addtion of fetching your variables with kim.my_category.my_variable you can use the function variables_dict to get a dictionary of the saved variables :
 

@@ -51,10 +51,11 @@ class _KeepInMind:
         module = "kim"
         module = importlib.import_module(module)
         for attr in dir(module):
-            if not attr.startswith("__"):
+            if attr in kim.variables_dict():
                 delattr(module, attr)
         if module in sys.modules:
             del sys.modules[module]
+        importlib.reload(kim)
 
     def _del_from_cache(self, category):
         module = importlib.import_module("kim")
@@ -96,34 +97,29 @@ class CreateOrUpdate(_KeepInMind):
 
 
 class Remove(_KeepInMind):
-    def __init__(self, category:str, name:str=None) -> None:
+    def __init__(self, category:str) -> None:
         """Remove either a whole category or a variable in category (no undo)
 
         Args:
             category (str): the target category
-            name (str, optional): the name of the variable to delete, if None the 
             whole category will be deleted. Defaults to None.
         """
         super().__init__()
-        if name is None:
-            with shelve.open(self.__vault__.file) as vault:
-                vault = vault[self.__root__.path]
-                del vault[category]
-                vault[self.__root__.path] = vault
-            os.remove(self.__root__.path + "/" + category + self.__ext__)
-            self._refresh_root()
-            self._refresh_init()
-            self._del_from_cache(category)
-        else:
-            with shelve.open(self.__vault__.file) as vault:
-                dict = vault[self.__root__.path]
-                del dict[category][name]
-                vault[self.__root__.path] = dict
+        with shelve.open(self.__vault__.file) as vault:
+            vault = vault[self.__root__.path]
+            del vault[category]
+            vault[self.__root__.path] = vault
+        os.remove(self.__root__.path + "/" + category + self.__ext__)
+        self._refresh_root()
+        self._refresh_init()
+        self._del_from_cache(category)
 
-            self._refresh_root()
-            self._refresh_init()
-            importlib.reload(kim)
-            importlib.reload(importlib.import_module(self.__root__.module + "." + category))
+
+        self._refresh_root()
+        self._refresh_init()
+        
+        importlib.reload(kim)
+        importlib.reload(importlib.import_module(self.__root__.module + "." + category))
 
 
 class Clear(_KeepInMind):
@@ -132,15 +128,16 @@ class Clear(_KeepInMind):
         Clear any remaining variables created with CreateOrUpdate (no undo)
         """
         super().__init__()
+        self._clear_cache()
         with shelve.open(self.__vault__.file) as vault:
             vault[self.__root__.path] = {}
         for file_path in os.listdir(self.__root__.path):
             if not file_path.endswith('__init__.py') and file_path[-3:] == self.__ext__:
                 os.remove(self.__root__.path + "/" + file_path)
         
+        self._clear_cache()
         self._refresh_root()
         self._refresh_init()
-        self._clear_cache()
 
 
 def variables_dict() -> Dict:
