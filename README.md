@@ -6,7 +6,7 @@ kim is a public pip librairy. It's purpose is to keep in mind your variable so y
 
 kim is compatible with python>=3.5 and doesn't require any other package from pip.
 ```bash
-pip install kim
+pip install kim-python
 ```
 
 
